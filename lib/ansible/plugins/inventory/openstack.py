@@ -108,6 +108,7 @@ fail_on_errors: yes
 '''
 
 import collections
+import os
 
 from ansible.errors import AnsibleParserError
 from ansible.plugins.inventory import BaseInventoryPlugin, Constructable, Cacheable
@@ -178,7 +179,7 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
             cloud_inventory = sdk_inventory.OpenStackInventory(
                 config_files=config_files,
                 private=self._config_data.get('private', False))
-            only_clouds = self._config_data.get('only_clouds', [])
+            only_clouds = self._config_data.get('only_clouds', [val for val in [os.environ.get('OS_CLOUD')] if val is not None])
             if only_clouds and not isinstance(only_clouds, list):
                 raise ValueError(
                     'OpenStack Inventory Config Error: only_clouds must be'
